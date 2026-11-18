@@ -25,9 +25,9 @@ lark-cli apps +deploy --file-path ./dist/index.html --app-id <app_id>
 
 1. 全屏 Hero：视频背景、快门开合入场、大标题、导航、联系按钮
 2. 个人经历：彩色肖像、简短介绍、联系方式、4 项数据
-3. 个人优势：一句主张 + 6 条能力清单 + 工具图标矩阵（Midjourney / 即梦 / Nano Banana / 剪映 / WorkBuddy / ChatGPT）
+3. 个人优势：一句主张 + 6 条能力清单 + 工具图标矩阵（Midjourney / 即梦 / Nano Banana / 剪映 / Photoshop / Lightroom / WorkBuddy / ChatGPT）
 4. 精选项目：4 张 16:9 视频卡片（悬停静音播放，点击弹层播放带原声完整版）+ 1 张设定板宽卡片
-5. 全屏联系 / 简历收尾页：联系信息、简历文件卡（PDF 查看 / Word 下载）、页脚
+5. 全屏联系 / 简历收尾页：联系信息、整卡可点击下载 PDF 的简历卡、页脚
 
 导航顺序为 经历 / 优势 / 作品 / 简历 / 联系；"联系我"、"简历" 与 "联系" 都会跳到最后一页；作品入口保留在首页主按钮和顶部导航。
 
@@ -54,13 +54,13 @@ lark-cli apps +deploy --file-path ./dist/index.html --app-id <app_id>
   - `portrait.jpg` 肖像，`hero.mp4` / `hero-poster.jpg` Hero 背景
   - `full/real.mp4` / `full/cg.mp4` / `full/fight.mp4` / `full/nextgen.mp4` 完整版视频，同时用于卡片悬停预览
   - `tools/*.png` 工具图标
-- 简历：替换 `resume/陈灿-简历.pdf` 与 `resume/陈灿-简历.docx` 后，运行 `node scripts/build-resume.mjs` 重新内联
+- 简历：替换 `resume/陈灿-简历.pdf` 后，运行 `node scripts/build-resume.mjs` 重新内联 PDF
 - 颜色、字号、间距：`src/styles.css` 顶部 `:root` 变量
 
 ## 说明
 
 - 项目数据来自简历可核实的信息（2023 开始影像创作、6 类工具、4 个交付环节），未编造商业项目数量。
-- 简历以 data URI 内联，查看 PDF 与下载 Word 不依赖外部文件。
+- 简历 PDF 以 data URI 内联，整张简历卡是可点击按钮：桌面端通过 Blob 直接下载；移动端优先调用系统保存/分享面板。
 - 字体走 `miaoda.feishu.cn` 自托管镜像（Sora + Noto Sans SC），失败时回落到系统字体。
 - 已适配 `prefers-reduced-motion`，并保留键盘焦点样式。
 - 发布版为单文件内联，图片/视频不走独立静态资源 URL；这是当前平台媒体可正常加载的关键。

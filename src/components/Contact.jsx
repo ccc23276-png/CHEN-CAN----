@@ -1,18 +1,49 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { profile, resume } from '../data/site'
 
-function openResumePdf() {
+function resumeFile() {
   const parts = resume.pdf.split(',')
   const mime = parts[0].match(/data:(.*?);/)?.[1] || 'application/pdf'
   const binary = atob(parts[1])
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i)
-  const url = URL.createObjectURL(new Blob([bytes], { type: mime }))
-  window.open(url, '_blank', 'noopener,noreferrer')
-  window.setTimeout(() => URL.revokeObjectURL(url), 60000)
+  return new File([bytes], resume.pdfName, { type: mime })
 }
 
 export default function Contact() {
+  const [resumeNote, setResumeNote] = useState('点击简历卡，下载 PDF 原件。')
+
+  async function downloadResumePdf() {
+    try {
+      const file = resumeFile()
+      const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+      if (mobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'CHEN CAN - Resume' })
+          setResumeNote('已打开系统保存面板，选择「存储到文件」即可。')
+          return
+        } catch (error) {
+          if (error && error.name === 'AbortError') {
+            setResumeNote('已取消保存，可再次点击简历卡。')
+            return
+          }
+        }
+      }
+
+      const url = URL.createObjectURL(file)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = resume.pdfName
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.setTimeout(() => URL.revokeObjectURL(url), 15000)
+      setResumeNote('PDF 已开始下载；若没有反应，请在浏览器中打开本页后重试。')
+    } catch (error) {
+      setResumeNote('下载未启动，请换用浏览器打开本页后重试。')
+    }
+  }
+
   return (
     <section className="contact" id="contact">
       <div className="contact__orbit" aria-hidden="true">
@@ -58,58 +89,45 @@ export default function Contact() {
                 <span>视觉 / AI 设计</span>
               </div>
             </div>
-
-            <div className="contact__actions" data-reveal>
-              <button type="button" className="btn btn--solid" onClick={openResumePdf}>
-                在线简历
-                <span aria-hidden="true">↗</span>
-              </button>
-              <a
-                className="contact__download"
-                href={resume.docx}
-                download={resume.docxName}
-              >
-                下载 Word
-              </a>
-            </div>
           </div>
 
           <aside className="contact__resume" id="resume" data-reveal>
             <div className="contact__resume-head">
               <span className="meta-label">Resume / 简历</span>
-              <span className="contact__resume-count">01 File · 02 Formats</span>
+              <span className="contact__resume-count">01 File · PDF</span>
             </div>
 
-            <div className="resume-sheet">
+            <button
+              type="button"
+              className="resume-sheet resume-sheet--download"
+              onClick={downloadResumePdf}
+              aria-label="下载或保存 CHEN CAN 的简历 PDF"
+              aria-describedby="resume-download-note"
+              data-reveal
+            >
               <span className="resume-sheet__mark" aria-hidden="true">CV</span>
               <div className="resume-sheet__top">
-                <span>{profile.nameEn}</span>
-                <span>2026</span>
+                <span>{profile.nameEn} / 2026</span>
+                <span className="resume-sheet__dl-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <path d="M12 3v12" />
+                    <path d="m7 10 5 5 5-5" />
+                    <path d="M5 21h14" />
+                  </svg>
+                </span>
               </div>
               <h3 className="resume-sheet__title">视觉 / AI 设计</h3>
               <p className="resume-sheet__focus">AIGC 漫剧 · AI 影像 · 概念设计</p>
 
               <div className="resume-sheet__meta">
                 <span>PDF · 1 页</span>
-                <span>Word 原件</span>
+                <span className="resume-sheet__cta">Download CV</span>
               </div>
+            </button>
 
-              <div className="resume-sheet__actions">
-                <button type="button" className="resume-sheet__link" onClick={openResumePdf}>
-                  查看 PDF
-                  <span aria-hidden="true">↗</span>
-                </button>
-                <a
-                  className="resume-sheet__link"
-                  href={resume.docx}
-                  download={resume.docxName}
-                >
-                  下载 Word
-                </a>
-              </div>
-            </div>
-
-            <p className="contact__resume-note">完整经历、项目明细与联系方式见简历文件。</p>
+            <p className="contact__resume-note" id="resume-download-note" aria-live="polite">
+              {resumeNote}
+            </p>
           </aside>
         </div>
 

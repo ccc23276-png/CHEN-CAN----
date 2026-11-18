@@ -27,8 +27,10 @@ import toolNano from '../assets/tools/nano-banana.png'
 import toolCapcut from '../assets/tools/capcut.png'
 import toolWorkbuddy from '../assets/tools/workbuddy.png'
 import toolChatgpt from '../assets/tools/chatgpt.png'
+import toolPhotoshop from '../assets/tools/photoshop.png'
+import toolLightroom from '../assets/tools/lightroom.png'
 
-import { resumePdf, resumeDocx, resumePdfName, resumeDocxName } from './resume'
+import { resumePdf, resumePdfName } from './resume'
 
 export const media = {
   portrait: portraitImg,
@@ -57,9 +59,7 @@ export const profile = {
 
 export const resume = {
   pdf: resumePdf,
-  docx: resumeDocx,
-  pdfName: resumePdfName,
-  docxName: resumeDocxName
+  pdfName: resumePdfName
 }
 
 export const projects = [
@@ -183,6 +183,14 @@ export const toolGroups = [
     tools: [
       { name: '即梦', icon: toolJimeng },
       { name: '剪映', icon: toolCapcut }
+    ]
+  },
+  {
+    label: '后期与调色',
+    labelEn: 'POST / COLOR',
+    tools: [
+      { name: 'Photoshop', icon: toolPhotoshop },
+      { name: 'Lightroom', icon: toolLightroom }
     ]
   },
   {
